@@ -299,6 +299,10 @@ platform darwin powerpc {
     depends_lib-delete port:libomp
     if {${subport} eq "clang-${llvm_version}"} {
         configure.args-append --with-clang-default-openmp-runtime=libgomp
+        
+        # new addition - this might fix
+        # https://trac.macports.org/ticket/54242
+        configure.args-append -DDARWIN_osx_ARCHS="ppc ppc64"
     }
 }
 
