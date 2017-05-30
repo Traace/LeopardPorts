@@ -162,8 +162,8 @@ if {${subport} eq "clang-${llvm_version}"} {
         3005-implement-atomic-using-mutex-lock_guard-for-64b-ops-.patch \
         compiler_rt-toolchain.patch \
         openmp-locations.patch \
-        4000-patch-clang-lib-codegen-targetinfo-ppc-38.diff \
-        4001-patch-compilerrtdarwinutils-ppc.diff
+        4000-patch-clang-lib-codegen-targetinfo-ppc-38.diff
+        
 
     # I'm not sure if we need to delete this.  It seems to build fine with it
     # present, but we used to explicitly only use this patch for the llvm subport.
