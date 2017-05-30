@@ -285,32 +285,31 @@ platform darwin {
 # fix build on powerpc
 platform darwin powerpc {
 
+
     #delete all the compiler blacklisting above
     compiler.blacklist
+
 
     # build with gcc6, which works
     compiler.whitelist macports-gcc-6
     supported_archs ppc ppc64
     
+
     # new - try to restrict the huge build to something useful on ppc
-    configure.args-append -DLLVM_TARGETS_TO_BUILD="ppc;ppc64"
+    # unfortunately this string doesn't work
+    # configure.args-append -DLLVM_TARGETS_TO_BUILD="ppc;ppc64"
     
+
+
+    # libomp doesn't presently build on powerpc so
     # dont build with libomp, use gcc6's libgomp instead
     # we will still need to fix up the macports patch to the directory for this library 
     # to point to libgcc's version
-
     depends_lib-delete port:libomp
     if {${subport} eq "clang-${llvm_version}"} {
         configure.args-append --with-clang-default-openmp-runtime=libgomp
-        
-        # new addition - this might fix
-        # https://trac.macports.org/ticket/54242
-        configure.args-append -DDARWIN_osx_ARCHS="ppc;ppc64"
     }
 }
-
-
-
 
 
 
@@ -476,7 +475,7 @@ if {${subport} eq "llvm-${llvm_version}"} {
         }
     }
 
-    default_variants +forcelibcxx
+    #default_variants +forcelibcxx
     variant forcelibcxx description {forces -stdlib=libc++ on all systems}  {
         #patch clang to always default to -stdlib=libc++, even on <10.9
         patchfiles-append 999-patch-clang-3.8-Toolchains-default-always-libcxx.diff
