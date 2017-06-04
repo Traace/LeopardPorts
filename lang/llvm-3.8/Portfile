@@ -286,30 +286,39 @@ platform darwin i386 {
 # fix build on powerpc
 platform darwin powerpc {
 
+    # at present, we are going to build clang-3.8 using gcc6
+    # it can link against either libc++ (on 10.5) or libstdc++ (on 10.4+)
+    # it can also link against gcc5+ libstdc++ to get cxx11, using
+    # -stdlib=macports-libstdc++ with the ABI mode set to be 4 compatible
+    # to do this, it is best to build libgcc with ABI mode set to 4
+
+    # these don't appear to be needed and are a PITA to build on PPC
+    depends_lib-delete  port:libedit port:ncurses port:zlib
+
+    # not as sure about this one - might be needed
+    # depends_lib-delete  port:libffi
+
     #delete all the compiler blacklisting above
     compiler.blacklist
     
-    # these don't appear to be needed and are a PITA to build on PPC
-    depends_lib-delete  port:libedit port:libffi port:ncurses port:zlib
-
-    # build with gcc6, which works
+    # build with gcc6, which works. probably gcc 4.8+ would work as well, not tried
     compiler.whitelist macports-gcc-6
     supported_archs ppc ppc64
     
-    # new - try to restrict the huge build to something useful on ppc
-    # unfortunately this string doesn't work
-    # configure.args-append -DLLVM_TARGETS_TO_BUILD="ppc;ppc64"
+    # To do - find a way to build only the ppc and ppc64 targets
     
     # libomp doesn't presently build on powerpc so
-    # dont build with libomp, use gcc6's libgomp instead
-    # we will still need to fix up the macports patch to the directory for this library 
+    # use gcc6's libgomp instead
+    
+    # To do - we will still need to fix up the macports patch to the directory for this library 
     # to point to libgcc's version
+
     depends_lib-delete port:libomp
     if {${subport} eq "clang-${llvm_version}"} {
         configure.args-append --with-clang-default-openmp-runtime=libgomp
     }
-}
 
+}
 
 
 variant universal {
