@@ -490,8 +490,7 @@ if {${subport} eq "llvm-${llvm_version}"} {
         }
     }
 
-    #default_variants +forcelibcxx
-    variant forcelibcxx description {forces -stdlib=libc++ on all systems}  {
+    variant forcelibcxx description {defaults to -stdlib=libc++ on all systems unless otherwise specified}  {
         #patch clang to always default to -stdlib=libc++, even on <10.9
         patchfiles-append 999-patch-clang-3.8-Toolchains-default-always-libcxx.diff
     }
