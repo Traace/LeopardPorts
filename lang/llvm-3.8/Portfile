@@ -130,7 +130,8 @@ patchfiles \
         0009-CMake-Fix-rpath-construction-for-out-of-tree-builds.patch \
         0010-CMake-Make-CMAKE_INSTALL_RPATH-work-again.patch \
         0011-CMake-Fix-llvm_setup_rpath-function.patch \
-        llvm-skip-unittests.patch
+        llvm-skip-unittests.patch \
+        4001-Only-call-setpriority-PRIO_DARWIN_THREAD-0-PRIO_DARW.patch
 
 if {${subport} eq "clang-${llvm_version}"} {
     patchfiles-append \
@@ -264,7 +265,7 @@ foreach ver {3.8 3.9 4.0 devel} {
 }
 
 
-platform darwin {
+platform darwin i386 {
     # Note that we are forcing this choice.  This means that anything linking
     # against llvm-3.5 needs to also be using libc++.  This is possibly
     # problematic, but luckily there is just a limited set of such dependents.
@@ -285,22 +286,20 @@ platform darwin {
 # fix build on powerpc
 platform darwin powerpc {
 
-
     #delete all the compiler blacklisting above
     compiler.blacklist
-
+    
+    # these don't appear to be needed and are a PITA to build on PPC
+    depends_lib-delete  port:libedit port:libffi port:ncurses port:zlib
 
     # build with gcc6, which works
     compiler.whitelist macports-gcc-6
     supported_archs ppc ppc64
     
-
     # new - try to restrict the huge build to something useful on ppc
     # unfortunately this string doesn't work
     # configure.args-append -DLLVM_TARGETS_TO_BUILD="ppc;ppc64"
     
-
-
     # libomp doesn't presently build on powerpc so
     # dont build with libomp, use gcc6's libgomp instead
     # we will still need to fix up the macports patch to the directory for this library 
