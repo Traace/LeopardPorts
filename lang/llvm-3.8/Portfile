@@ -133,6 +133,9 @@ patchfiles \
         llvm-skip-unittests.patch \
         4001-patch-llvm-Only-call-setpriority-PRIO_DARWIN_THREAD-0-PRIO_DARW.diff
 
+        # 4001 - only call setpriority if available
+
+
 if {${subport} eq "clang-${llvm_version}"} {
     patchfiles-append \
         1001-MacPorts-Only-Prepare-clang-format-for-replacement-w.patch \
@@ -163,8 +166,15 @@ if {${subport} eq "clang-${llvm_version}"} {
         3005-implement-atomic-using-mutex-lock_guard-for-64b-ops-.patch \
         compiler_rt-toolchain.patch \
         openmp-locations.patch \
-        4000-patch-clang-lib-codegen-targetinfo-ppc-38.diff
-        
+        4000-patch-clang-lib-codegen-targetinfo-ppc-38.diff \
+        4001-patch-clang-3.8-gccabi-sema.diff \
+        4002-patch-clang-3.8-gccabi-mangler.diff
+    
+    # 4000 - backport va_args support for PPC from trunk
+    # <https://reviews.llvm.org/D33499>
+    
+    # 4001 and 4002 - backport gcc5.1 abi support from trunk to 3.8, using debian patches
+    # <https://sources.debian.net/src/llvm-toolchain-3.8/1:3.8.1-24/debian/patches/>
 
     # I'm not sure if we need to delete this.  It seems to build fine with it
     # present, but we used to explicitly only use this patch for the llvm subport.
