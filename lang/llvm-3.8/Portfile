@@ -133,9 +133,6 @@ patchfiles \
         llvm-skip-unittests.patch \
         4001-patch-llvm-Only-call-setpriority-PRIO_DARWIN_THREAD-0-PRIO_DARW.diff
 
-        # 4001 - only call setpriority if available
-
-
 if {${subport} eq "clang-${llvm_version}"} {
     patchfiles-append \
         1001-MacPorts-Only-Prepare-clang-format-for-replacement-w.patch \
