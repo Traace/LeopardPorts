@@ -176,7 +176,7 @@ diff -U 6 -r /Users/Shared/tools/clang/lib/Frontend/InitHeaderSearch.cpp ./tools
      case llvm::Triple::ppc64:
 +      if (HSOpts.UseMacPortsLibstdcxx) {
 +        AddGnuCPlusPlusIncludePaths("@@MACPORTS_GCC_INCLUDE_DIR@@",
-+                                    "@@MACPORTS_HOST_NAME@@", "", "ppc64",
++                                    "ppc-apple-darwin@@MACPORTS_OS_MAJOR@@", "", "ppc64",
 +                                    triple);
 +      } else {
        AddGnuCPlusPlusIncludePaths("/usr/include/c++/4.2.1",
@@ -192,7 +192,7 @@ diff -U 6 -r /Users/Shared/tools/clang/lib/Frontend/InitHeaderSearch.cpp ./tools
      case llvm::Triple::x86_64:
 +      if (HSOpts.UseMacPortsLibstdcxx) {
 +        AddGnuCPlusPlusIncludePaths("@@MACPORTS_GCC_INCLUDE_DIR@@",
-+                                    "@@MACPORTS_HOST_NAME@@", "i386", "", triple);
++                                    "x86_64-apple-darwin@@MACPORTS_OS_MAJOR@@", "i386", "", triple);
 +      } else {
        AddGnuCPlusPlusIncludePaths("/usr/include/c++/4.2.1",
                                    "i686-apple-darwin10", "", "x86_64", triple);
