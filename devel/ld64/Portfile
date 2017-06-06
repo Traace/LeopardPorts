@@ -158,21 +158,24 @@ subport ld64-latest {
     set ld64_ver        latest
 
     patchfiles-append \
+        ld64-241-9-restore-ppc.diff \
         ld64-version.patch \
         ld64-133-no-CrashReporterClient.h.patch \
         ld64-134-missing-include.patch \
         ld64-136-i386-badAddress.patch \
         ld64-ppc-9610466.patch
 
-    configure.cxx_stdlib libc++
-    depends_lib-append port:libcxx
-    supported_archs i386 x86_64
-
-    pre-fetch {
-        if {![file exists /usr/lib/libc++.dylib]} {
-            ui_error "$name requires a C++11 runtime, which your configuration does not allow"
-            error "unsupported configuration"
-        }
+	platform darwin i386 {
+		# configure.cxx_stdlib libc++
+		# depends_lib-append port:libcxx
+		# supported_archs i386 x86_64
+	
+		pre-fetch {
+			if {![file exists /usr/lib/libc++.dylib]} {
+				ui_error "$name requires a C++11 runtime, which your configuration does not allow"
+				error "unsupported configuration"
+			}
+		}
     }
 
 }
