@@ -30,7 +30,7 @@ if {${subport} eq "llvm-${llvm_version}"} {
                         around a well specified code representation known as \
                         the LLVM intermediate representation ("LLVM IR").
 
-    depends_lib         port:libedit port:libffi port:ncurses port:zlib
+    depends_lib         port:libedit port:libffi port:ncurses port:zlib port:python27
     depends_run         bin:perl:perl5 port:llvm_select
 } elseif {${subport} eq "clang-${llvm_version}"} {
     homepage            http://clang.llvm.org/
@@ -272,6 +272,13 @@ foreach ver {3.8 3.9 4.0 devel} {
 }
 
 
+# restore this fix from an older clang portfile
+if {${subport} eq "clang-${llvm_version}" && ${os.major} <= 10} {
+        patchfiles-append 9002-compiler_rt-ppc_fallbacks.patch
+}
+
+
+
 platform darwin i386 {
     # Note that we are forcing this choice.  This means that anything linking
     # against llvm-3.5 needs to also be using libc++.  This is possibly
@@ -311,6 +318,9 @@ platform darwin powerpc {
     # build with gcc6, which works. probably gcc 4.8+ would work as well, not tried
     compiler.whitelist macports-gcc-6
     supported_archs ppc ppc64
+    
+    default_variants +libstdcxx
+    universal_variant no
     
     # To do - find a way to build only the ppc and ppc64 targets
     
