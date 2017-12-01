@@ -114,6 +114,7 @@ configure.args      --with-mac-version-min=$macosx_deployment_target \
                     --disable-systemd-daemon \
                     --disable-systemd-login \
                     --disable-systemd-journal \
+                    --disable-dbus \
                     --enable-neon-opt=no \
                     --enable-orc \
                     --enable-adrian-aec
