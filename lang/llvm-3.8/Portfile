@@ -313,7 +313,7 @@ platform darwin powerpc {
     universal_variant no
     
     # To do - find a way to build only the ppc and ppc64 targets
-    configure.args-append -DLLVM_TARGETS_TO_BUILD="PowerPC;X86"
+#    configure.args-append -DLLVM_TARGETS_TO_BUILD="PowerPC;X86"
     
     # libomp doesn't presently build on powerpc so
     # use gcc6's libgomp instead
