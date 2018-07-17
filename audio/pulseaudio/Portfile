@@ -31,7 +31,7 @@ use_xz              yes
 checksums           rmd160  e237245db82ddb9069b7b80435ef1d4867d7609e \
                     sha256  a3186824de9f0d2095ded5d0d0db0405dc73133983c2fbb37291547e37462f57
 
-set perl_branch     5.24
+set perl_branch     5.26
 
 depends_build       port:pkgconfig \
                     port:intltool \
