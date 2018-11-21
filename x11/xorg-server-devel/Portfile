@@ -57,11 +57,12 @@ platform darwin {
     }
 
     if {${os.major} <= 9} {
-        # Remove this once a version of base is released that contains macports-clang-4.0 in the default fallback list
         compiler.blacklist *gcc-3.* *gcc-4.*
         compiler.fallback  macports-gcc-6 macports-gcc-7
         universal_variant no
     }
+
+
 }
 
 configure.args --with-apple-applications-dir=${applications_dir} \
@@ -108,9 +109,15 @@ patchfiles \
 patchfiles-append fix-calloc-free-mis-match-bug.patch
 
 # fix build with non-Apple gcc versions
-patchfiles-append patch-xorg-server-devel-gcc6.diff
+patchfiles-append 6000-patch-xorg-server-devel-gcc6.diff
+patchfiles-append 6001-patch-quartz-c-cfrunloopdef.patch
+patchfiles-append 6002-patch-tiger-missing-string-h.patch
 
 patch.pre_args -p1
+
+platform darwin 8 {
+    configure.args-append --disable-dependency-tracking
+}
 
 use_autoreconf yes
 autoreconf.args -fvi
