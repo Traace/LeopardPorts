@@ -373,41 +373,58 @@ platform darwin i386 {
 # fix build on powerpc
 platform darwin powerpc {
 
-    # at present, we are going to build clang-3.8 using gcc6
+    # we are going to build clang-5.0 using gcc6
     # it can link against either libc++ (on 10.5) or libstdc++ (on 10.4+)
     # it can also link against gcc5+ libstdc++ to get cxx11, using
     # -stdlib=macports-libstdc++ with the ABI mode set to be 4 compatible
     # to do this, it is best to build libgcc with ABI mode set to 4
 
+
+# DIFFICULT UNREQUIRED LIBRARIES ISSUE
     # these don't appear to be needed and are a PITA to build on PPC
     depends_lib-delete  port:libedit port:ncurses port:zlib
 
     # not as sure about this one - might be needed
     # depends_lib-delete  port:libffi
 
-    #delete all the compiler blacklisting above
+
+# COMPILER SELECTION
+    # delete all the compiler blacklisting above, build with gcc6, which works. 
+    # probably gcc 4.8+ would work as well, not tried. May need to try gcc7 due to 
+    # std::log2 issue noted below
+
     compiler.blacklist
-    
-    # build with gcc6, which works. probably gcc 4.8+ would work as well, not tried
     compiler.whitelist macports-gcc-6
-    supported_archs ppc ppc64
-    
-    default_variants +libstdcxx
+
+# note error tools/clang/tools/extra/include-fixer/SymbolIndexManager.cpp:56:30: error: 'log2' is not a member of 'std'
+#                       (1.0 + std::log2(1 + Symbol.Signals.Seen));
+# fix by changing to log2 or by building with gcc7 (not yet tested)
+
+
+    # for now...
+    supported_archs ppc
     universal_variant no
     
-    # To do - find a way to build only the ppc and ppc64 targets
+    # make macports rev-upgrade happy
+    default_variants +libstdcxx
+    
+    # build only the ppc target as it takes forever
     configure.args-append -DLLVM_TARGETS_TO_BUILD="PowerPC"
     
+# LIBOMP issue
     # libomp doesn't presently build on powerpc so
     # use gcc6's libgomp instead
-    
-    # To do - we will still need to fix up the macports patch to the directory for this library 
+    # TO DO - we need to fix up the macports patch to the directory for this library 
     # to point to libgcc's version
-
     depends_lib-delete port:libomp
     if {${subport} eq "clang-${llvm_version}"} {
         configure.args-append --with-clang-default-openmp-runtime=libgomp
     }
+    
+# CLANG_RT issue
+    ## DISABLE clang_rt for now - obviously have to fix this
+    ## SEE THE DESTROOT CHANGE BELOW AS WELL
+    configure.args-replace -DLLVM_BUILD_RUNTIME=ON -DLLVM_BUILD_RUNTIME=OFF
 
 }
 
@@ -520,8 +537,10 @@ post-extract {
 if {${subport} eq "clang-${llvm_version}"} {
     destroot {
         system "cd ${destroot.dir}/tools/clang && ${destroot.cmd} ${destroot.pre_args} ${destroot.target} ${destroot.post_args}"
-        system "cd ${destroot.dir}/projects/compiler-rt && ${destroot.cmd} ${destroot.pre_args} ${destroot.target} ${destroot.post_args}"
-        system "cd ${destroot.dir}/projects/libcxx && ${destroot.cmd} ${destroot.pre_args} ${destroot.target} ${destroot.post_args}"
+
+### DISABLED FOR PPC AT PRESENT
+###        system "cd ${destroot.dir}/projects/compiler-rt && ${destroot.cmd} ${destroot.pre_args} ${destroot.target} ${destroot.post_args}"
+###        system "cd ${destroot.dir}/projects/libcxx && ${destroot.cmd} ${destroot.pre_args} ${destroot.target} ${destroot.post_args}"
 
         delete ${destroot}${sub_prefix}/bin/clang
         file rename ${destroot}${sub_prefix}/bin/clang-${clang_executable_version} ${destroot}${sub_prefix}/bin/clang
