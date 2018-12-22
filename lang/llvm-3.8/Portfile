@@ -312,8 +312,14 @@ platform darwin powerpc {
     default_variants +libstdcxx
     universal_variant no
     
-    # To do - find a way to build only the ppc and ppc64 targets
-#    configure.args-append -DLLVM_TARGETS_TO_BUILD="PowerPC;X86"
+    if {${subport} eq "clang-${llvm_version}" && ${os.major} <= 9} {
+        patchfiles-append 9002-patch-clang-3.8-compiler-rt-ppc-additions.diff
+        patchfiles-append 9003-patch-clang-3.8-libcxx-thread-nanoseconds-max-gcc.diff
+    }
+
+#    configure.args-append -DLLVM_TARGETS_TO_BUILD="PowerPC X86"
+    configure.args-append -DLLVM_TARGETS_TO_BUILD="PowerPC"
+
     
     # libomp doesn't presently build on powerpc so
     # use gcc6's libgomp instead
@@ -327,6 +333,8 @@ platform darwin powerpc {
     }
 
 }
+
+
 
 
 variant universal {
@@ -548,10 +556,17 @@ if {${subport} eq "llvm-${llvm_version}"} {
         }
     }
 
+    default_variants-append +libstdcxx
 
-    variant forcelibcxx description {defaults to -stdlib=libc++ on all systems unless otherwise specified}  {
-        #patch clang to always default to -stdlib=libc++, even on <10.9
-        patchfiles-append 999-patch-clang-3.8-Toolchains-default-always-libcxx.diff
+    variant defaultlibcxx description {default to -stdlib=libc++ on all systems}  {
+        #patch clang to always default to -stdlib=libc++ if not otherwise specified
+        patchfiles-append 9004-patch-clang-3.8-Toolchains-default-always-libcxx.diff
+    }
+
+    # if macports.conf is configured to stdlib=libc++ then make that the default if not otherwise specified
+    # exactly matches the behaviour of newer systems
+    if { ${cxx_stdlib} eq "libc++" } {
+        default_variants-append +defaultlibcxx
     }
 
 
