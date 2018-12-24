@@ -118,8 +118,11 @@ if {${os.major} < 11 || [variant_isset replacemnt_libcxx]} {
 
     if {[string match *gcc* ${configure.compiler}]} {
       patchfiles-append \
+        0004-libcxx-includes-thread-nanoseconds-max-gcc.diff \
         1003-patch-libcxx-buildit-script-build-with-gcc.diff \
         2001-patch-libcxxabi-buildit-script-build-with-gcc.diff
+
+      build.env-append PREFIX=${prefix}
     }
         
     post-patch {
